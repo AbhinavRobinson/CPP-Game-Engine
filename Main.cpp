@@ -28,6 +28,14 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+	// Vertices coordinates for equalateral triangle
+	GLfloat vertices[] =
+	{
+		-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
+		0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
+		0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f // Upper corner
+	};
+
 	// Create Window of size 800x800.
 	GLFWwindow* window = glfwCreateWindow(800, 800, "CPP-GameEngine", NULL, NULL);
 	
@@ -46,6 +54,28 @@ int main() {
 
 	// Create Viewport with window dimensions.
 	glViewport(0, 0, 800, 800);
+
+	// Translate Vertex shader into Machine Code
+	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
+	glCompileShader(vertexShader);
+
+	// Translate Fragment shader into Machine Code
+	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
+	glCompileShader(fragmentShader);
+
+	// Create a combined shader pipeline
+	GLuint shaderProgram = glCreateProgram();
+
+	// Attach both shaders and link
+	glAttachShader(shaderProgram, vertexShader);
+	glAttachShader(shaderProgram, fragmentShader);
+	glLinkProgram(shaderProgram);
+
+	// Delete original shader source (not required anymore)
+	glDeleteShader(vertexShader);
+	glDeleteShader(fragmentShader);
 
 	// Repaint Window with dark coral blue color.
 	glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
