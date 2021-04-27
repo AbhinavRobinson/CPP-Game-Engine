@@ -55,27 +55,57 @@ int main() {
 	// Create Viewport with window dimensions.
 	glViewport(0, 0, 800, 800);
 
-	// Translate Vertex shader into Machine Code
+	// Translate Vertex shader into Machine Code.
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
 	glCompileShader(vertexShader);
 
-	// Translate Fragment shader into Machine Code
+	// Translate Fragment shader into Machine Code.
 	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
 	glCompileShader(fragmentShader);
 
-	// Create a combined shader pipeline
+	// Create a combined shader pipeline.
 	GLuint shaderProgram = glCreateProgram();
 
-	// Attach both shaders and link
+	// Attach both shaders and link.
 	glAttachShader(shaderProgram, vertexShader);
 	glAttachShader(shaderProgram, fragmentShader);
 	glLinkProgram(shaderProgram);
 
-	// Delete original shader source (not required anymore)
+	// Delete original shader source (not required anymore).
 	glDeleteShader(vertexShader);
 	glDeleteShader(fragmentShader);
+
+	// Create a Vertex Array Object (an array of buffers).
+	// Create a Vertex Buffer Object (to transfer data between CPU and GPU in batch).
+	GLuint VAO, VBO;
+
+	// Our VAO has 1 Buffer object.
+	glGenVertexArrays(1, &VAO);
+	// Generate buffer with no. of objects, refernce to buffer.
+	// pass arg "1" since we only have one 3D object.
+	glGenBuffers(1, &VBO);
+	// Tell GL about the VAO of buffer.
+	glBindVertexArray(VAO);
+	// Bind object as Current Object (GL Current object is target for GL functions).
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// Provide data to buffer.
+	// GL_STATIC_DRAW : Current Data (singular) will be used to draw images on screen multiple times.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+	// Link VAO with the VBO.
+	// 0 is the location of the Vertex.
+	// 3 is the number of floats per Vertex.
+	// GL_FLOAT is the datatype, GL_FALSE since we are not using normalized integers.
+	// Next is the size of each Vertex.
+	// Last is a (weird?) Null Pointer.
+	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	glEnableVertexAttribArray(0);
+
+	// Bind the VBO and VAO so it's not accidently modified.
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
 
 	// Repaint Window with dark coral blue color.
 	glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
@@ -86,10 +116,29 @@ int main() {
 
 	// Keep window open until closed by user.
 	while (!glfwWindowShouldClose(window)) {
+		// Repaint Window with dark coral blue color.
+		glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
+		// feed data into buffer.
+		glClear(GL_COLOR_BUFFER_BIT);
+		// Use Shader.
+		glUseProgram(shaderProgram);
+		// Bind the Buffer.
+		glBindVertexArray(VAO);
+		// Draw Triangle :)
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		// Swap back and front buffers.
+		glfwSwapBuffers(window);
 		// Respond to Events.
 		glfwPollEvents();
 	}
 
+	// ---------------- MEMORY CLEANUP ----------------
+	// Delete VBO and VAO.
+	glDeleteVertexArrays(1, &VAO);
+	glDeleteBuffers(1, &VBO);
+	// Delete Shader.
+	glDeleteProgram(shaderProgram);
 	// Cleanup GLFW context.
 	glfwDestroyWindow(window);
 	glfwTerminate();
