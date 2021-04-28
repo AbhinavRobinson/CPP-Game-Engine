@@ -57,16 +57,21 @@ int main() {
 	// Create Viewport with window dimensions.
 	glViewport(0, 0, 800, 800);
 
-
+	// Load in vertex and fragment shaders into pipeline
 	Shader shaderProgram("default.vert", "default.frag");
 
+	// Create a Vertex Array Object to Hold our vector objects
 	VAO VAO1;
 	VAO1.Bind();
 
+	// Create a Vertex Buffer Object to go in the VAO
 	VBO VBO1(vertices, sizeof(vertices));
+	// Create a Element Buffer Object to hold our indices 
 	EBO EBO1(indices, sizeof(indices));
 
+	// Link VAO <---> VBO
 	VAO1.LinkVBO(VBO1, 0);
+	// Cleanup
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
@@ -79,14 +84,12 @@ int main() {
 		glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
 		// feed data into buffer.
 		glClear(GL_COLOR_BUFFER_BIT);
-
+		// Start Shader Program
 		shaderProgram.Activate();
-
+		// Load in the VAO
 		VAO1.Bind();
-
 		// Draw Triangle :)
 		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
-
 		// Swap back and front buffers.
 		glfwSwapBuffers(window);
 		// Respond to Events.
@@ -98,7 +101,6 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 	shaderProgram.Delete();
-	// Cleanup GLFW context.
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
