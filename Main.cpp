@@ -52,28 +52,6 @@ int main() {
 	// Create Viewport with window dimensions.
 	glViewport(0, 0, 800, 800);
 
-	// Translate Vertex shader into Machine Code.
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertexShaderSource, NULL);
-	glCompileShader(vertexShader);
-
-	// Translate Fragment shader into Machine Code.
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
-	glCompileShader(fragmentShader);
-
-	// Create a combined shader pipeline.
-	GLuint shaderProgram = glCreateProgram();
-
-	// Attach both shaders and link.
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
-	glLinkProgram(shaderProgram);
-
-	// Delete original shader source (not required anymore).
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
-
 	// Create a Vertex Array Object (an array of buffers).
 	// Create a Vertex Buffer Object (to transfer data between CPU and GPU in batch).
 	// Create a Element Array Buffer to store indices.
@@ -106,7 +84,7 @@ int main() {
 	// GL_FLOAT is the datatype, GL_FALSE since we are not using normalized integers.
 	// Next is the size of each Vertex.
 	// Last is a (weird?) Null Pointer.
-	glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
 
 	// Bind the VBO, VAO, EBO so it's not accidently modified.
@@ -129,8 +107,6 @@ int main() {
 		glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
 		// feed data into buffer.
 		glClear(GL_COLOR_BUFFER_BIT);
-		// Use Shader.
-		glUseProgram(shaderProgram);
 		// Bind the Buffer.
 		glBindVertexArray(VAO);
 		// Draw Triangle :)
@@ -147,8 +123,6 @@ int main() {
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
 	glDeleteBuffers(1, &EBO);
-	// Delete Shader.
-	glDeleteProgram(shaderProgram);
 	// Cleanup GLFW context.
 	glfwDestroyWindow(window);
 	glfwTerminate();
