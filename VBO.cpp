@@ -9,7 +9,7 @@ VBO::VBO(GLfloat* vertices, GLsizeiptr size)
 	glBindBuffer(GL_ARRAY_BUFFER, ID);
 	// Provide data to buffer.
 	// GL_STATIC_DRAW : Current Data (singular) will be used to draw images on screen multiple times.
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 }
 
 void VBO::Bind()
