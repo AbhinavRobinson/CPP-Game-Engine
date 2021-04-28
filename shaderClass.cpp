@@ -18,11 +18,11 @@ std::string get_file_contents(const char* filename)
 }
 
 Shader::Shader(const char* vertexFile, const char* fragmentFile) {
+	// Get Shaders
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
-
 	const char* vertexSource = vertexCode.c_str();
-	const char* fragmentSource = vertexCode.c_str();
+	const char* fragmentSource = fragmentCode.c_str();
 
 	// Translate Vertex shader into Machine Code.
 	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);

@@ -1,7 +1,6 @@
 #include"VAO.h"
 
 VAO::VAO() {
-	// Our VAO has 1 Buffer object.
 	glGenVertexArrays(1, &ID);
 }
 
