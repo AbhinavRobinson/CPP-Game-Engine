@@ -7,14 +7,15 @@
 #include"VAO.h"
 #include"VBO.h"
 #include"EBO.h"
+#include"Texture.h"
 
 // Vertices coordinates
 GLfloat vertices[] =
 { //       COORDINATES       |       COLOR          //
-	-0.5f , -0.5f , 0.0f      , 1.0f, 0.0f , 0.0f  ,// Lower left corner
-	-0.5f ,  0.5f , 0.0f      , 0.0f, 1.0f , 0.0f  ,// Upper left corner
-	 0.5f ,  0.5f , 0.0f      , 0.0f, 0.0f , 1.0f  ,// Upper right corner
-	 0.5f , -0.5f , 0.0f      , 1.0f, 1.0f , 1.0f  ,// Lower right corner
+	-0.5f , -0.5f , 0.0f      , 1.0f, 0.0f , 0.0f  , 0.0f, 0.0f,// Lower left corner
+	-0.5f ,  0.5f , 0.0f      , 0.0f, 1.0f , 0.0f  , 0.0f, 1.0f,// Upper left corner
+	 0.5f ,  0.5f , 0.0f      , 0.0f, 0.0f , 1.0f  , 1.0f, 1.0f,// Upper right corner
+	 0.5f , -0.5f , 0.0f      , 1.0f, 1.0f , 1.0f  , 1.0f, 0.0f,// Lower right corner
 };
 
 // Indices for vertices order
@@ -68,9 +69,11 @@ int main() {
 
 	// Link VAO <---> VBO
 	// Coordinate stride
-	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
+	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
 	// Color stride
-	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	// Texture stride
+	VAO1.LinkAttrib(VBO1, 2, 2, GL_FLOAT, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 
 	// Cleanup
 	VAO1.Unbind();
@@ -79,6 +82,12 @@ int main() {
 
 	// Add Uniform scaler (size up or down vector shapes).
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
+
+	// Texture
+
+	// Texture
+	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	popCat.texUnit(shaderProgram, "tex0", 0);
 
 	// ---------------- RENDER LOOP ----------------
 	// Keep window open until closed by user.
@@ -91,10 +100,11 @@ int main() {
 		shaderProgram.Activate();
 		// Scale the vector.
 		glUniform1f(uniID, 0.5f);
+		popCat.Bind();
 		// Load in the VAO
 		VAO1.Bind();
 		// Draw Triangle :)
-		glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 		// Swap back and front buffers.
 		glfwSwapBuffers(window);
 		// Respond to Events.
@@ -106,6 +116,7 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 	shaderProgram.Delete();
+	popCat.Delete();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
