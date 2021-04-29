@@ -73,13 +73,16 @@ int main() {
 	VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 6 * sizeof(float), (void*)0);
 	// Color stride
 	VAO1.LinkAttrib(VBO1, 1, 3, GL_FLOAT, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+
 	// Cleanup
 	VAO1.Unbind();
 	VBO1.Unbind();
 	EBO1.Unbind();
 
-	// ---------------- RENDER LOOP ----------------
+	// Add Uniform scaler (size up or down vector shapes).
+	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
+	// ---------------- RENDER LOOP ----------------
 	// Keep window open until closed by user.
 	while (!glfwWindowShouldClose(window)) {
 		// Repaint Window with dark coral blue color.
@@ -88,6 +91,8 @@ int main() {
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Start Shader Program
 		shaderProgram.Activate();
+		// Scale the vector.
+		glUniform1f(uniID, 0.5f);
 		// Load in the VAO
 		VAO1.Bind();
 		// Draw Triangle :)
