@@ -1,2 +1,5 @@
 ﻿  Main.cpp
+  VAO.cpp
+D:\MAINSTUFF\ActiveProjects\CPP-Game-Engine\VAO.cpp(9,63): warning C4244: 'argument': conversion from 'GLsizeiptr' to 'GLsizei', possible loss of data
+  Generating Code...
   CPP-Game-Engine.vcxproj -> D:\MAINSTUFF\ActiveProjects\CPP-Game-Engine\x64\Debug\CPP-Game-Engine.exe
