@@ -99,7 +99,7 @@ int main() {
 		// Start Shader Program
 		shaderProgram.Activate();
 		// Scale the vector.
-		glUniform1f(uniID, 0.5f);
+		glUniform1f(uniID, 0.0f);
 		popCat.Bind();
 		// Load in the VAO
 		VAO1.Bind();
