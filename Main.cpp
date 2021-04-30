@@ -14,18 +14,23 @@
 
 // Vertices coordinates
 GLfloat vertices[] =
-{ //       COORDINATES       |       COLOR          //
-	-0.5f , -0.5f , 0.0f      , 1.0f, 0.0f , 0.0f  , 0.0f, 0.0f,// Lower left corner
-	-0.5f ,  0.5f , 0.0f      , 0.0f, 1.0f , 0.0f  , 0.0f, 1.0f,// Upper left corner
-	 0.5f ,  0.5f , 0.0f      , 0.0f, 0.0f , 1.0f  , 1.0f, 1.0f,// Upper right corner
-	 0.5f , -0.5f , 0.0f      , 1.0f, 1.0f , 1.0f  , 1.0f, 0.0f,// Lower right corner
+{ //     COORDINATES     /        COLORS      /   TexCoord  //
+	-0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+	-0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+	 0.5f, 0.0f, -0.5f,     0.83f, 0.70f, 0.44f,	0.0f, 0.0f,
+	 0.5f, 0.0f,  0.5f,     0.83f, 0.70f, 0.44f,	5.0f, 0.0f,
+	 0.0f, 0.8f,  0.0f,     0.92f, 0.86f, 0.76f,	2.5f, 5.0f
 };
 
 // Indices for vertices order
 GLuint indices[] =
 {
-	0, 2, 1, // Upper triangle
-	0, 3, 2  // Lower triangle
+	0, 1, 2,
+	0, 2, 3,
+	0, 1, 4,
+	1, 2, 4,
+	2, 3, 4,
+	3, 0, 4
 };
 
 const unsigned int width = 800, height = 800;
@@ -89,10 +94,13 @@ int main() {
 	GLuint uniID = glGetUniformLocation(shaderProgram.ID, "scale");
 
 	// Texture
+	Texture brickTex("brick.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
+	brickTex.texUnit(shaderProgram, "tex0", 0);
 
-	// Texture
-	Texture popCat("pop_cat.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGBA, GL_UNSIGNED_BYTE);
-	popCat.texUnit(shaderProgram, "tex0", 0);
+	float rotation = 0.0f;
+	double prevTime = glfwGetTime();
+
+	glEnable(GL_DEPTH_TEST);
 
 	// ---------------- RENDER LOOP ----------------
 	// Keep window open until closed by user.
@@ -100,14 +108,22 @@ int main() {
 		// Repaint Window with dark coral blue color.
 		glClearColor(0.0f, 0.13f, 0.17f, 1.0f);
 		// feed data into buffer.
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		// Start Shader Program
 		shaderProgram.Activate();
+
+		double currTime = glfwGetTime();
+		if (currTime - prevTime >= 1 / 60)
+		{
+			rotation += 0.5f;
+			prevTime = currTime;
+		}
 
 		glm::mat4 model = glm::mat4(1.0f);
 		glm::mat4 view = glm::mat4(1.0f);
 		glm::mat4 proj = glm::mat4(1.0f);
 
+		model = glm::rotate(model, glm::radians(rotation), glm::vec3(0.0f, 1.0f, 0.0f));
 		view = glm::translate(view, glm::vec3(0.0f, -0.5f, -2.0f));
 		proj = glm::perspective(glm::radians(45.0f), (float)(width / height), 0.1f, 100.0f);
 
@@ -120,11 +136,11 @@ int main() {
 
 		// Scale the vector.
 		glUniform1f(uniID, 0.0f);
-		popCat.Bind();
+		brickTex.Bind();
 		// Load in the VAO
 		VAO1.Bind();
 		// Draw Triangle :)
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, sizeof(indices) / sizeof(int), GL_UNSIGNED_INT, 0);
 		// Swap back and front buffers.
 		glfwSwapBuffers(window);
 		// Respond to Events.
@@ -136,7 +152,7 @@ int main() {
 	VBO1.Delete();
 	EBO1.Delete();
 	shaderProgram.Delete();
-	popCat.Delete();
+	brickTex.Delete();
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
