@@ -1,2 +1,6 @@
 ﻿  Main.cpp
+  Mesh.cpp
+D:\MAINSTUFF\ActiveProjects\CPP-Game-Engine\Mesh.cpp(55,65): warning C4267: 'argument': conversion from 'size_t' to 'GLsizei', possible loss of data
+  VBO.cpp
+  Generating Code...
   CPP-Game-Engine.vcxproj -> D:\MAINSTUFF\ActiveProjects\CPP-Game-Engine\x64\Debug\CPP-Game-Engine.exe
